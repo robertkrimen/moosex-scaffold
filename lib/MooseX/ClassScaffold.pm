@@ -30,6 +30,13 @@ use MooseX::ClassAttribute();
 
 no Moose;
 
+sub load_class {
+    my $self = shift;
+    my $class = shift;
+    return 1 if Class::Inspector->loaded($class);
+    return eval "require $class;" or die $@;
+}
+
 sub _load_scaffold_class {
     my $self = shift;
     my $scaffold_class = shift;
@@ -63,6 +70,8 @@ sub build_scaffolding_import {
         my $CALLER = Moose::Exporter::_get_caller(@_);
         my $class = shift;
 
+        return if $CALLER eq 'main';
+
         # TODO Check to see if $CALLER is a Moose::Object?
         $scaffold_class->SCAFFOLD($CALLER->meta, exporting_package => $class, @_);
 
@@ -93,6 +102,34 @@ sub load_or_scaffold_class {
     $scaffold_class->SCAFFOLD($meta, exporting_package => undef, %given);
 
     return $meta;
+}
+
+sub parent_package {
+    my $self = shift;
+    my $package = shift;
+    return $self->repackage($package, undef, shift);
+}
+
+sub child_package {
+    my $self = shift;
+    my $package = shift;
+    return $self->repackage($package, shift);
+}
+
+sub repackage {
+    my $self = shift;
+    my $package = shift;
+    my $replacement = shift;
+    my $count = shift;
+
+    $count = 0 unless defined $count && length $count;
+
+    return $package unless $count >= 1;
+    
+    my @package = split m/::/, $package;
+    pop @package while $count--;
+    push @package, $replacement if defined $replacement && length $replacement;
+    return join '::', @package;
 }
 
 sub extends {
