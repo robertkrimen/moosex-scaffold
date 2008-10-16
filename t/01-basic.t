@@ -15,9 +15,9 @@ package t::Scaffold;
 
 use Test::More;
 
-use MooseX::ClassScaffold;
+use MooseX::Scaffold;
 
-MooseX::ClassScaffold->setup_scaffolding_import;
+MooseX::Scaffold->setup_scaffolding_import;
 
 sub SCAFFOLD {
     my $self = shift;

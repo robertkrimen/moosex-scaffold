@@ -1,11 +1,11 @@
-package MooseX::ClassScaffold;
+package MooseX::Scaffold;
 
 use warnings;
 use strict;
 
 =head1 NAME
 
-MooseX::ClassScaffold -
+MooseX::Scaffold -
 
 =head1 VERSION
 
@@ -171,12 +171,12 @@ You can contribute or fork this project via GitHub:
 
 L<http://github.com/robertkrimen/moosex-classscaffold/tree/master>
 
-    git clone git://github.com/robertkrimen/moosex-classscaffold.git MooseX-ClassScaffold
+    git clone git://github.com/robertkrimen/moosex-classscaffold.git MooseX-Scaffold
 
 =head1 BUGS
 
 Please report any bugs or feature requests to C<bug-moosex-classscaffold at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=MooseX-ClassScaffold>.  I will be notified, and then you'll
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=MooseX-Scaffold>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
 
 
@@ -186,7 +186,7 @@ automatically be notified of progress on your bug as I make changes.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc MooseX::ClassScaffold
+    perldoc MooseX::Scaffold
 
 
 You can also look for information at:
@@ -195,19 +195,19 @@ You can also look for information at:
 
 =item * RT: CPAN's request tracker
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=MooseX-ClassScaffold>
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=MooseX-Scaffold>
 
 =item * AnnoCPAN: Annotated CPAN documentation
 
-L<http://annocpan.org/dist/MooseX-ClassScaffold>
+L<http://annocpan.org/dist/MooseX-Scaffold>
 
 =item * CPAN Ratings
 
-L<http://cpanratings.perl.org/d/MooseX-ClassScaffold>
+L<http://cpanratings.perl.org/d/MooseX-Scaffold>
 
 =item * Search CPAN
 
-L<http://search.cpan.org/dist/MooseX-ClassScaffold>
+L<http://search.cpan.org/dist/MooseX-Scaffold>
 
 =back
 
@@ -225,4 +225,4 @@ under the same terms as Perl itself.
 
 =cut
 
-1; # End of MooseX::ClassScaffold
+1; # End of MooseX::Scaffold

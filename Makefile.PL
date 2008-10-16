@@ -1,7 +1,7 @@
 use inc::Module::Install;
 
-name 'MooseX-ClassScaffold';
-all_from 'lib/MooseX/ClassScaffold.pm';
+name 'MooseX-Scaffold';
+all_from 'lib/MooseX/Scaffold.pm';
 
 resources repository => 'http://github.com/robertkrimen/moosex-classscaffold/tree/master';
 

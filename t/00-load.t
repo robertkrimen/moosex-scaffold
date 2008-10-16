@@ -3,7 +3,7 @@
 use Test::More tests => 1;
 
 BEGIN {
-	use_ok( 'MooseX::ClassScaffold' );
+	use_ok( 'MooseX::Scaffold' );
 }
 
-diag( "Testing MooseX::ClassScaffold $MooseX::ClassScaffold::VERSION, Perl $], $^X" );
+diag( "Testing MooseX::Scaffold $MooseX::Scaffold::VERSION, Perl $], $^X" );

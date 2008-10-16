@@ -1,5 +1,5 @@
 NAME
-    MooseX::ClassScaffold -
+    MooseX::Scaffold -
 
 VERSION
     Version 0.01
@@ -13,33 +13,33 @@ SOURCE
 
     <http://github.com/robertkrimen/moosex-classscaffold/tree/master>
 
-        git clone git://github.com/robertkrimen/moosex-classscaffold.git MooseX-ClassScaffold
+        git clone git://github.com/robertkrimen/moosex-classscaffold.git MooseX-Scaffold
 
 BUGS
     Please report any bugs or feature requests to "bug-moosex-classscaffold
     at rt.cpan.org", or through the web interface at
-    <http://rt.cpan.org/NoAuth/ReportBug.html?Queue=MooseX-ClassScaffold>. I
-    will be notified, and then you'll automatically be notified of progress
-    on your bug as I make changes.
+    <http://rt.cpan.org/NoAuth/ReportBug.html?Queue=MooseX-Scaffold>. I will
+    be notified, and then you'll automatically be notified of progress on
+    your bug as I make changes.
 
 SUPPORT
     You can find documentation for this module with the perldoc command.
 
-        perldoc MooseX::ClassScaffold
+        perldoc MooseX::Scaffold
 
     You can also look for information at:
 
     * RT: CPAN's request tracker
-        <http://rt.cpan.org/NoAuth/Bugs.html?Dist=MooseX-ClassScaffold>
+        <http://rt.cpan.org/NoAuth/Bugs.html?Dist=MooseX-Scaffold>
 
     * AnnoCPAN: Annotated CPAN documentation
-        <http://annocpan.org/dist/MooseX-ClassScaffold>
+        <http://annocpan.org/dist/MooseX-Scaffold>
 
     * CPAN Ratings
-        <http://cpanratings.perl.org/d/MooseX-ClassScaffold>
+        <http://cpanratings.perl.org/d/MooseX-Scaffold>
 
     * Search CPAN
-        <http://search.cpan.org/dist/MooseX-ClassScaffold>
+        <http://search.cpan.org/dist/MooseX-Scaffold>
 
 ACKNOWLEDGEMENTS
 COPYRIGHT & LICENSE
