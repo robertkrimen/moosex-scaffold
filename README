@@ -2,7 +2,7 @@ NAME
     MooseX::Scaffold - Template metaprogramming with Moose
 
 VERSION
-    Version 0.02
+    Version 0.03
 
 SYNOPSIS
         package MyScaffolder;
@@ -121,11 +121,12 @@ METHODS
     A convenience method that will attempt to require $package or $class if
     not already loaded
 
-    Essentially doe ...
+    Essentially does ...
 
         eval "require $package;" or die $@
 
-    ... but uses Class::Inspector to see if it has been loaded already
+    ... but uses Class::Inspector to check for $package existence first
+    (%INC is not trustworthy)
 
 AUTHOR
     Robert Krimen, "<rkrimen at cpan.org>"

@@ -26,6 +26,7 @@ t/06-setup-scaffolding-import.t
 t/07-setup-scaffolding-import-subroutine.t
 t/08-chain-import.t
 t/10-usage.t
+t/9000-no-add-class-attribute-warning.t
 t/release/boilerplate.t
 t/release/pod-coverage.t
 t/release/pod.t
