@@ -9,11 +9,11 @@ MooseX::Scaffold - Template metaprogramming with Moose
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
@@ -54,7 +54,7 @@ our $VERSION = '0.01';
 
 =head1 DESCRIPTION
 
-MooseX::Scaffolder is a tool for creating or augmenting Moose classes on-the-fly. 
+MooseX::Scaffold is a tool for creating or augmenting Moose classes on-the-fly. 
 
 Scaffolding can be triggered when a C<use> is executed (any import arguments are passed
 to the scaffold subroutine) or you can explicitly call MooseX::Scaffold->scaffold with the scaffolding
@@ -74,7 +74,7 @@ you're trying to create/augment):
 
 =head1 METHODS
 
-MooseX::Scaffolder->scaffold( ... )
+=head2 MooseX::Scaffold->scaffold( ... )
 
 Scaffold a class by either loading it or creating it. You can pass through the following:
 
@@ -95,23 +95,23 @@ Scaffold a class by either loading it or creating it. You can pass through the f
                             on class creation. This has no effect if the class is loaded (If you
                             want class_has with a loaded class, make sure to 'use MooseX::ClassAttribute')
 
-MooseX::Scaffolder->load_and_scaffold
+=head2 MooseX::Scaffold->load_and_scaffold( ... )
 
 An alias for ->scaffold
 
-MooseX::Scaffolder->load_or_scaffold
+=head2 MooseX::Scaffold->load_or_scaffold( ... )
 
 An alias for ->scaffold with C<load_or_scaffold> set to 1
 
-MooseX::Scaffolder->load
+=head2 MooseX::Scaffold->load( ... )
 
 An alias for ->load_or_scaffold
 
-MooseX::Scaffolder->scaffold_without_load
+=head2 MooseX::Scaffold->scaffold_without_load( ... )
 
 An alias for ->scaffold with C<scaffold_without_load> set to 1
 
-MooseX::Scaffolder->build_scaffolding_import
+=head2 MooseX::Scaffold->build_scaffolding_import( ... )
 
 Return an anonymous subroutine suitable for use an an import function
 
@@ -121,7 +121,7 @@ Anything passable to ->scaffold is fair game. In addition:
 
     chain_import    An (optional) subroutine that will goto'd after scaffolding is complete
 
-MooseX::Scaffolder->setup_scaffolding_import
+=head2 MooseX::Scaffold->setup_scaffolding_import( ... )
 
 Install an import subroutine. By default, caller() will be used for the exporting package, but
 another may be specified.

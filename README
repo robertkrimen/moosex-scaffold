@@ -44,21 +44,21 @@ DESCRIPTION
     MooseX::Scaffolder is a tool for creating or augmenting Moose classes
     on-the-fly.
 
-    You can setup scaffolding to take place when a "use" is executed (any
-    import arguments are passed to the scaffold subroutine) or you can
-    explicitly call MooseX::Scaffolder->scaffold with the scaffolding code
-    and the package name for the class.
+    Scaffolding can be triggered when a "use" is executed (any import
+    arguments are passed to the scaffold subroutine) or you can explicitly
+    call MooseX::Scaffold->scaffold with the scaffolding subroutine and the
+    package name for the class.
 
-    Depending on what you're trying to do, MooseX::Scaffolder can behave in
-    three different ways (My::Class is the class you're trying to
+    Depending on what you're trying to do, MooseX::Scaffold can behave in
+    three different ways (Assume My::Class is the class you're trying to
     create/augment):
 
         load_and_scaffold (scaffold)   - Attempt to require My::Class from My/Class.pm or do Moose::Meta::Class->create('My::Class')
                                          to make the package on-the-fly. Scaffold the result.
 
         load_or_scaffold (load)        - Attempt to require My::Class from My/Class.pm and stop if that works. If no My/Class.pm is
-                                         found in @INC, then do Moose::Meta::Class->create('My::Class') to make the package on-the-fly
-                                         and scaffold My::Class. This option can be used to create a default class if one isn't found.
+                                         found in @INC, then make a Moose class on-the-fly and scaffold it.
+                                         This option can be used to create a default class if one isn't found.
 
         scaffold_without_load          - Don't attempt to require My::Class, just create it on-the-fly and scaffold it.
 
