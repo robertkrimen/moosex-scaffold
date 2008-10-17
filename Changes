@@ -1,3 +1,7 @@
+0.03:
+    - Added ->load_package (and ->load_class) convenience method
+    - Added check + nice warning for lack of ->add_class_attribute
+
 0.02 Friday October 17 11:38:35 PDT 2008:
     - Fixed documentation
 

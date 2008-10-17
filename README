@@ -113,7 +113,19 @@ METHODS
     addition:
 
         exporter
-        exporting_package   The package that will trigger the scaffolding when used (or imported)
+        exporting_package   The package that will house the import subroutine (the scaffolding will trigger
+                            when the package is used or imported)
+
+  MooseX::Scaffold->load_package( $package )
+  MooseX::Scaffold->load_class( $class )
+    A convenience method that will attempt to require $package or $class if
+    not already loaded
+
+    Essentially doe ...
+
+        eval "require $package;" or die $@
+
+    ... but uses Class::Inspector to see if it has been loaded already
 
 AUTHOR
     Robert Krimen, "<rkrimen at cpan.org>"

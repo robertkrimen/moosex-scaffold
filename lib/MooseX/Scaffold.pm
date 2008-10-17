@@ -9,11 +9,11 @@ MooseX::Scaffold - Template metaprogramming with Moose
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
@@ -129,7 +129,8 @@ another may be specified.
 Anything passable to ->build_scaffolding_import is fair game. In addition:
 
     exporter
-    exporting_package   The package that will trigger the scaffolding when used (or imported)
+    exporting_package   The package that will house the import subroutine (the scaffolding will trigger
+                        when the package is used or imported)
 
 =cut
 
@@ -141,6 +142,31 @@ use Moose::Exporter;
 use MooseX::ClassAttribute();
 
 use MooseX::Scaffold::Class;
+
+=head2 MooseX::Scaffold->load_package( $package )
+
+=head2 MooseX::Scaffold->load_class( $class )
+
+A convenience method that will attempt to require $package or $class if not already loaded
+
+Essentially does ...
+
+    eval "require $package;" or die $@
+
+... but uses Class::Inspector to check for $package existence first (%INC is not trustworthy)
+
+=cut
+
+sub load_package {
+    my $self = shift;
+    my $package = shift;
+    return 1 if Class::Inspector->loaded($package);
+    return eval "require $package;" or die $@;
+}
+
+sub load_class {
+    return shift->load_package(@_);
+}
 
 sub setup_scaffolding_import {
     my $self = shift;
