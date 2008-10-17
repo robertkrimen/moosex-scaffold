@@ -5,7 +5,7 @@ use strict;
 
 =head1 NAME
 
-MooseX::Scaffold -
+MooseX::Scaffold - Create or augment Moose classes on-the-fly
 
 =head1 VERSION
 
@@ -15,41 +15,23 @@ Version 0.01
 
 our $VERSION = '0.01';
 
-require Exporter;
-use vars qw/@ISA @EXPORT/;
-@ISA = qw/Exporter/;
-@EXPORT = qw/Scaffold/;
-
-sub Scaffold { __PACKAGE__ }
-
 use Class::Inspector;
 use Carp;
 use Moose();
+no Moose;
 use Moose::Exporter;
 use MooseX::ClassAttribute();
 
-no Moose;
-
-sub load_class {
-    my $self = shift;
-    my $class = shift;
-    return 1 if Class::Inspector->loaded($class);
-    return eval "require $class;" or die $@;
-}
-
-sub _load_scaffold_class {
-    my $self = shift;
-    my $scaffold_class = shift;
-    return if Class::Inspector->loaded($scaffold_class);
-    eval "require $scaffold_class;" or croak "Unable to load scaffold class $scaffold_class since: $@";
-}
+use MooseX::Scaffold::Class;
 
 sub setup_scaffolding_import {
     my $self = shift;
     my %given = @_;
 
-    my $exporting_package = $given{exporting_package} ||= caller();
-    my $scaffold_class = $given{scaffold_class} ||= caller();
+    my $exporting_package = $given{exporting_package};
+    $exporting_package ||= $given{exporter} ? delete $given{exporter} : caller;
+
+    my $scaffolder = $given{scaffolder} ||= caller;
 
     my ( $import, $unimport ) = $self->build_scaffolding_import(%given);
 
@@ -61,47 +43,93 @@ sub build_scaffolding_import {
     my $self = shift;
     my %given = @_;
 
-    my $scaffold_class = $given{scaffold_class} ||= caller();
-    $self->_load_scaffold_class($scaffold_class);
-
+    my $scaffolder = $given{scaffolder} ||= caller;
     my $chain_import = $given{chain_import};
 
     return sub {
         my $CALLER = Moose::Exporter::_get_caller(@_);
-        my $class = shift;
+        my $exporting_package = shift;
 
         return if $CALLER eq 'main';
 
         # TODO Check to see if $CALLER is a Moose::Object?
-        $scaffold_class->SCAFFOLD($CALLER->meta, exporting_package => $class, @_);
+        $self->scaffold(class_package => $CALLER, %given, exporting_package => $exporting_package, @_);
 
         goto &$chain_import if $chain_import;
     };
 }
 
-sub load_or_scaffold_class {
+sub load {
+    my $self = shift;
+    return $self->scaffold(@_, load_or_scaffold => 1);
+}
+
+sub load_or_scaffold {
+    my $self = shift;
+    return $self->load(@_);
+}
+
+sub load_and_scaffold {
+    my $self = shift;
+    return $self->scaffold(@_);
+}
+
+sub scaffold_without_load {
+    my $self = shift;
+    return $self->scaffold(@_, scaffold_without_load => 1);
+}
+
+sub scaffold {
     my $self = shift;
     my %given = @_;
 
-    my $class = $given{class};
-    my $scaffold_class = $given{scaffold_class};
+    my $class_package = $given{class_package} || $given{class};
+    my $scaffolder = $given{scaffolding_package} || $given{scaffolder};
+    my $load_or_scaffold = $given{load_or_scaffold};
+    my $scaffold_without_load = $given{scaffold_without_load};
 
-    unless (Class::Inspector->loaded($class)) {
-        if (Class::Inspector->installed($class)) {
-            eval "require $class;";
+    if (! $scaffold_without_load && Class::Inspector->loaded($class_package)) {
+        return if $load_or_scaffold;
+    }
+    else {
+        if (! $scaffold_without_load && Class::Inspector->installed($class_package)) {
+            eval "require $class_package;";
             die $@ if $@;
-            # TODO Check to see if $class is a Moose::Object?
-            return $class->meta;
+            return if $load_or_scaffold;
+        }
+        else {
+            my $meta = Moose::Meta::Class->create($class_package);
         }
     }
 
-    $self->_load_scaffold_class($scaffold_class);
+    my $scaffolding_package;
+    if (ref $scaffolder eq 'CODE') {
+    }
+    else {
+        $scaffolding_package = $scaffolder;
+        $self->_load_scaffolding_package($scaffolding_package);
+        $scaffolder = $scaffolding_package->can('SCAFFOLD');
+        croak "Unable to find method SCAFFOLD in package $scaffolding_package" unless $scaffolder;
+    }
 
-    my $meta = Moose::Meta::Class->create($class);
+    $self->_scaffold($class_package, $scaffolder, @_, scaffolding_package => $scaffolding_package);
 
-    $scaffold_class->SCAFFOLD($meta, exporting_package => undef, %given);
+}
 
-    return $meta;
+sub _load_scaffolding_package {
+    my $self = shift;
+    my $scaffolding_package = shift;
+    return if Class::Inspector->loaded($scaffolding_package);
+    eval "require $scaffolding_package;" or croak "Unable to load scaffolding class $scaffolding_package since: $@";
+}
+
+sub _scaffold {
+    my $self = shift;
+    my $class_package = shift;
+    my $scaffolder = shift;
+
+    my $class = MooseX::Scaffold::Class->new($class_package);
+    $scaffolder->($class, @_, class_package => $class_package);
 }
 
 sub parent_package {
@@ -130,33 +158,6 @@ sub repackage {
     pop @package while $count--;
     push @package, $replacement if defined $replacement && length $replacement;
     return join '::', @package;
-}
-
-sub extends {
-    my $self = shift;
-    my $class = shift;
-    $class = $class->name if ref $class;
-    return Moose::extends($class, @_);
-}
-
-sub has {
-    my $self = shift;
-    my $class = shift;
-    $class = $class->name if ref $class;
-    return Moose::has($class, @_);
-}
-
-sub class_has {
-    my $self = shift;
-    my $class = shift;
-    $class = $class->name if ref $class;
-
-    Moose::Util::MetaRole::apply_metaclass_roles(
-        for_class => $class,
-        metaclass_roles => [ 'MooseX::ClassAttribute::Role::Meta::Class' ],
-    );
-
-    return MooseX::ClassAttribute::class_has($class, @_);
 }
 
 =head1 SYNOPSIS

@@ -24,8 +24,10 @@ Test::Most
 _END_
 
     map { my ($pk, $vr) = split m/\s/; requires $pk => $vr || 0 } grep { ! /^\s*#/ } split m/\n/, <<_END_;
-Moose
-MooseX::ClassAttribute
+Moose 0.580
+MooseX::ClassAttribute 0.060
+Carp::Clan
+Class::Inspector
 _END_
 }
 

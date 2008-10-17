@@ -1,5 +1,5 @@
 NAME
-    MooseX::Scaffold -
+    MooseX::Scaffold - Create or augment Moose classes on-the-fly
 
 VERSION
     Version 0.01

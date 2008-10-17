@@ -20,12 +20,11 @@ use MooseX::Scaffold;
 MooseX::Scaffold->setup_scaffolding_import;
 
 sub SCAFFOLD {
-    my $self = shift;
-    my ($meta, %given) = @_;
+    my ($class, %given) = @_;
 
-    Scaffold->extends($meta => "t::Scaffold::Object");
-    Scaffold->class_has($meta => apple => qw/is rw/);
-    Scaffold->class_has($meta => banana => qw/is rw/);
+    $class->extends("t::Scaffold::Object");
+    $class->class_has(apple => qw/is rw/);
+    $class->class_has(banana => qw/is rw/);
 
     is($given{cherry}, 2);
 }
