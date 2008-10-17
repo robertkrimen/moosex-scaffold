@@ -5,7 +5,7 @@ use strict;
 
 =head1 NAME
 
-MooseX::Scaffold - Create or augment Moose classes on-the-fly
+MooseX::Scaffold - Template metaprogramming with Moose
 
 =head1 VERSION
 
@@ -15,8 +15,82 @@ Version 0.01
 
 our $VERSION = '0.01';
 
+=head1 SYNOPSIS
+
+    package MyScaffolder;
+
+    use MooseX::Scaffold;
+
+    MooseX::Scaffolder->setup_scaffolding_import;
+
+    sub SCAFFOLD {
+        my $class = shift;
+        my %given = @_;
+
+        $class->has($given{kind} => is => 'ro', isa => 'Int', required => 1);
+
+        # Using MooseX::ClassAttribute
+        $class->class_has(kind => is => 'ro', isa => 'Str');
+        $class->package->kind($given{kind});
+    }
+
+    package MyAppleClass;
+
+    use Moose;
+    use MyScaffolder kind => 'apple';
+
+    package MyBananaClass;
+
+    use Moose;
+    use MyScaffolder kind => 'banana';
+
+    # ... meanwhile, back at the Batcave ...
+
+    use MyAppleClass;
+
+    my $apple = MyAppleClass->new(apple => 1);
+    my $banana = MyAppleClass->new(banana => 2);
+
+=head1 DESCRIPTION
+
+MooseX::Scaffolder is a tool for creating or augmenting Moose classes on-the-fly. 
+
+You can setup scaffolding to take place when a C<use> is executed (any import arguments are passed
+to the scaffold subroutine) or you can explicitly call MooseX::Scaffolder->scaffold with the scaffolding
+code and the package name for the class.
+
+Depending on what you're trying to do, MooseX::Scaffolder can behave in three different ways (My::Class is the class
+you're trying to create/augment):
+
+    load_and_scaffold (scaffold)   - Attempt to require My::Class from My/Class.pm or do Moose::Meta::Class->create('My::Class')
+                                     to make the package on-the-fly. Scaffold the result.
+
+    load_or_scaffold (load)        - Attempt to require My::Class from My/Class.pm and stop if that works. If no My/Class.pm is
+                                     found in @INC, then do Moose::Meta::Class->create('My::Class') to make the package on-the-fly
+                                     and scaffold My::Class. This option can be used to create a default class if one isn't found.
+
+    scaffold_without_load          - Don't attempt to require My::Class, just create it on-the-fly and scaffold it.
+
+=head1 METHODS
+
+MooseX::Scaffolder->load_and_scaffold
+
+MooseX::Scaffolder->scaffold
+
+MooseX::Scaffolder->load_or_scaffold
+
+MooseX::Scaffolder->load
+
+MooseX::Scaffolder->scaffold_without_load
+
+MooseX::Scaffolder->build_scaffolding_import
+
+MooseX::Scaffolder->setup_scaffolding_import
+
+=cut
+
 use Class::Inspector;
-use Carp;
+use Carp::Clan;
 use Moose();
 no Moose;
 use Moose::Exporter;
@@ -159,8 +233,6 @@ sub repackage {
     push @package, $replacement if defined $replacement && length $replacement;
     return join '::', @package;
 }
-
-=head1 SYNOPSIS
 
 =head1 AUTHOR
 
