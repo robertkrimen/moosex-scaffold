@@ -32,6 +32,7 @@ sub SCAFFOLD {
 package t::ScaffoldProject;
 
 use Moose;
+use MooseX::ClassAttribute;
 
 t::Scaffold->import(cherry => 2);
 

@@ -37,13 +37,7 @@ for my $method (qw/ extends has before after around super override augment /) {
 
 sub class_has {
     my $self = shift;
-
-    # TODO Only do this once?
-    Moose::Util::MetaRole::apply_metaclass_roles(
-        for_class => $self->package,
-        metaclass_roles => [ 'MooseX::ClassAttribute::Role::Meta::Class' ],
-    );
-
+    # TODO Check to see if the proper role has been applied first
     return MooseX::ClassAttribute::class_has($self->package, @_);
 }
 

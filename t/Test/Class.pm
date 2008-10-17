@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Moose;
+use MooseX::ClassAttribute;
 
 sub loaded {
     return 1;

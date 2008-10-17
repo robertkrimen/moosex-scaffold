@@ -3,7 +3,7 @@ use inc::Module::Install;
 name 'MooseX-Scaffold';
 all_from 'lib/MooseX/Scaffold.pm';
 
-resources repository => 'http://github.com/robertkrimen/moosex-classscaffold/tree/master';
+resources repository => 'http://github.com/robertkrimen/moosex-scaffold/tree/master';
 
 {
     require ExtUtils::MakeMaker;

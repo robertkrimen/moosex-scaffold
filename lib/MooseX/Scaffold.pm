@@ -21,71 +21,115 @@ our $VERSION = '0.01';
 
     use MooseX::Scaffold;
 
-    MooseX::Scaffolder->setup_scaffolding_import;
+    MooseX::Scaffold->setup_scaffolding_import;
 
     sub SCAFFOLD {
-        my $class = shift;
-        my %given = @_;
+        my $class = shift; my %given = @_;
 
         $class->has($given{kind} => is => 'ro', isa => 'Int', required => 1);
 
         # Using MooseX::ClassAttribute
-        $class->class_has(kind => is => 'ro', isa => 'Str');
-        $class->package->kind($given{kind});
+        $class->class_has(kind => is => 'ro', isa => 'Str', default => $given{kind});
     }
 
     package MyAppleClass;
 
     use Moose;
+    use MooseX::ClassAttribute;
     use MyScaffolder kind => 'apple';
 
     package MyBananaClass;
 
     use Moose;
+    use MooseX::ClassAttribute;
     use MyScaffolder kind => 'banana';
 
     # ... meanwhile, back at the Batcave ...
 
     use MyAppleClass;
+    use MyBananaClass;
 
     my $apple = MyAppleClass->new(apple => 1);
-    my $banana = MyAppleClass->new(banana => 2);
+    my $banana = MyBananaClass->new(banana => 2);
 
 =head1 DESCRIPTION
 
 MooseX::Scaffolder is a tool for creating or augmenting Moose classes on-the-fly. 
 
-You can setup scaffolding to take place when a C<use> is executed (any import arguments are passed
-to the scaffold subroutine) or you can explicitly call MooseX::Scaffolder->scaffold with the scaffolding
-code and the package name for the class.
+Scaffolding can be triggered when a C<use> is executed (any import arguments are passed
+to the scaffold subroutine) or you can explicitly call MooseX::Scaffold->scaffold with the scaffolding
+subroutine and the package name for the class.
 
-Depending on what you're trying to do, MooseX::Scaffolder can behave in three different ways (My::Class is the class
+Depending on what you're trying to do, MooseX::Scaffold can behave in three different ways (Assume My::Class is the class
 you're trying to create/augment):
 
     load_and_scaffold (scaffold)   - Attempt to require My::Class from My/Class.pm or do Moose::Meta::Class->create('My::Class')
                                      to make the package on-the-fly. Scaffold the result.
 
     load_or_scaffold (load)        - Attempt to require My::Class from My/Class.pm and stop if that works. If no My/Class.pm is
-                                     found in @INC, then do Moose::Meta::Class->create('My::Class') to make the package on-the-fly
-                                     and scaffold My::Class. This option can be used to create a default class if one isn't found.
+                                     found in @INC, then make a Moose class on-the-fly and scaffold it.
+                                     This option can be used to create a default class if one isn't found.
 
     scaffold_without_load          - Don't attempt to require My::Class, just create it on-the-fly and scaffold it.
 
 =head1 METHODS
 
+MooseX::Scaffolder->scaffold( ... )
+
+Scaffold a class by either loading it or creating it. You can pass through the following:
+
+    scaffolder              
+    scaffolding_package     This should be either a subroutine (sub { ... }) or a package name. If a package name
+                            is given, then the package should contain a subroutine called SCAFFOLD
+
+    class
+    class_package           The package name of resulting class
+
+    load_or_scaffold        Attempt to load $class_package first and do nothing successful. Otherwise create
+                            $class_package and scaffold it
+
+    scaffold_without_load   Scaffold $class_package without attempting to load it first. Does not have
+                            any effect if $class_package has been loaded already
+
+    no_class_attribute      Set this to 1 to disable applying the MooseX::ClassAttribute meta-role
+                            on class creation. This has no effect if the class is loaded (If you
+                            want class_has with a loaded class, make sure to 'use MooseX::ClassAttribute')
+
 MooseX::Scaffolder->load_and_scaffold
 
-MooseX::Scaffolder->scaffold
+An alias for ->scaffold
 
 MooseX::Scaffolder->load_or_scaffold
 
+An alias for ->scaffold with C<load_or_scaffold> set to 1
+
 MooseX::Scaffolder->load
+
+An alias for ->load_or_scaffold
 
 MooseX::Scaffolder->scaffold_without_load
 
+An alias for ->scaffold with C<scaffold_without_load> set to 1
+
 MooseX::Scaffolder->build_scaffolding_import
 
+Return an anonymous subroutine suitable for use an an import function
+
+Anything passable to ->scaffold is fair game. In addition:
+
+    scaffolder      This will default to the package of caller() if unspecified
+
+    chain_import    An (optional) subroutine that will goto'd after scaffolding is complete
+
 MooseX::Scaffolder->setup_scaffolding_import
+
+Install an import subroutine. By default, caller() will be used for the exporting package, but
+another may be specified.
+
+Anything passable to ->build_scaffolding_import is fair game. In addition:
+
+    exporter
+    exporting_package   The package that will trigger the scaffolding when used (or imported)
 
 =cut
 
@@ -103,11 +147,14 @@ sub setup_scaffolding_import {
     my %given = @_;
 
     my $exporting_package = $given{exporting_package};
-    $exporting_package ||= $given{exporter} ? delete $given{exporter} : caller;
+    $exporting_package ||= $given{exporter} ? delete $given{exporter} : scalar caller;
 
-    my $scaffolder = $given{scaffolder} ||= caller;
+    my $scaffolder = $given{scaffolder} ||= scalar caller;
 
     my ( $import, $unimport ) = $self->build_scaffolding_import(%given);
+
+    eval "package $exporting_package;";
+    croak "Couldn't open exporting package $exporting_package since: $@" if $@;
 
     no strict 'refs';
     *{ $exporting_package . '::import' }   = $import;
@@ -117,7 +164,7 @@ sub build_scaffolding_import {
     my $self = shift;
     my %given = @_;
 
-    my $scaffolder = $given{scaffolder} ||= caller;
+    my $scaffolder = $given{scaffolder} ||= scalar caller;
     my $chain_import = $given{chain_import};
 
     return sub {
@@ -161,9 +208,10 @@ sub scaffold {
     my $scaffolder = $given{scaffolding_package} || $given{scaffolder};
     my $load_or_scaffold = $given{load_or_scaffold};
     my $scaffold_without_load = $given{scaffold_without_load};
+    my $no_class_attribute = $given{no_class_attribute};
 
-    if (! $scaffold_without_load && Class::Inspector->loaded($class_package)) {
-        return if $load_or_scaffold;
+    if (Class::Inspector->loaded($class_package)) {
+        return if ! $scaffold_without_load && $load_or_scaffold;
     }
     else {
         if (! $scaffold_without_load && Class::Inspector->installed($class_package)) {
@@ -173,6 +221,12 @@ sub scaffold {
         }
         else {
             my $meta = Moose::Meta::Class->create($class_package);
+            unless ($no_class_attribute) {
+                Moose::Util::MetaRole::apply_metaclass_roles(
+                    for_class => $class_package,
+                    metaclass_roles => [ 'MooseX::ClassAttribute::Role::Meta::Class' ],
+                )
+            }
         }
     }
 
@@ -242,9 +296,9 @@ Robert Krimen, C<< <rkrimen at cpan.org> >>
 
 You can contribute or fork this project via GitHub:
 
-L<http://github.com/robertkrimen/moosex-classscaffold/tree/master>
+L<http://github.com/robertkrimen/moosex-scaffold/tree/master>
 
-    git clone git://github.com/robertkrimen/moosex-classscaffold.git MooseX-Scaffold
+    git clone git://github.com/robertkrimen/moosex-scaffold.git MooseX-Scaffold
 
 =head1 BUGS
 
