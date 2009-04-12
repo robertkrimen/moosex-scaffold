@@ -161,7 +161,8 @@ sub load_package {
     my $self = shift;
     my $package = shift;
     return 1 if Class::Inspector->loaded($package);
-    return eval "require $package;" or die $@;
+    eval "require $package;" or die $@;
+    return 1; # FIXME
 }
 
 sub load_class {
@@ -200,7 +201,7 @@ sub build_scaffolding_import {
         return if $CALLER eq 'main';
 
         # TODO Check to see if $CALLER is a Moose::Object?
-        $self->scaffold(class_package => $CALLER, %given, exporting_package => $exporting_package, @_);
+        $self->scaffold(class_package => $CALLER, %given, exporting_package => $exporting_package, \@_);
 
         goto &$chain_import if $chain_import;
     };
@@ -228,6 +229,8 @@ sub scaffold_without_load {
 
 sub scaffold {
     my $self = shift;
+    my $arguments = [];
+    $arguments = pop @_ if ref $_[-1] eq 'ARRAY';
     my %given = @_;
 
     my $class_package = $given{class_package} || $given{class};
@@ -266,7 +269,7 @@ sub scaffold {
         croak "Unable to find method SCAFFOLD in package $scaffolding_package" unless $scaffolder;
     }
 
-    $self->_scaffold($class_package, $scaffolder, @_, scaffolding_package => $scaffolding_package);
+    $self->_scaffold($class_package, $scaffolder, @$arguments, scaffolding_package => $scaffolding_package);
 
 }
 
