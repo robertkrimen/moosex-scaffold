@@ -30,10 +30,11 @@ sub meta {
 
 for my $method (qw/ extends has before after around super override augment /) {
     no strict 'refs';
-    my $moose_method = Moose->can($method);
+    my $moose_method = Moose->can( $method );
     *$method = sub {
         my $self = shift;
-        return $moose_method->($self->package, @_);
+        my $meta = $self->package->meta;
+        return $moose_method->( $meta, @_ );
     };
 }
 

@@ -16,7 +16,6 @@ inc/Module/Install/Win32.pm
 inc/Module/Install/WriteAll.pm
 lib/MooseX/Scaffold.pm
 lib/MooseX/Scaffold/Class.pm
-t/00-load.t
 t/01-basic.t
 t/02-load-and-scaffold.t
 t/03-load-or-scaffold.t
