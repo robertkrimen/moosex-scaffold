@@ -1,3 +1,7 @@
+0.04 Monday November 23 12:48:38 PST 2009:
+    - Updated to work with the latest Moose
+    - Made low priority, failing test TODO
+
 0.03 Friday October 17 15:30:09 PDT 2008:
     - Added ->load_package (and ->load_class) convenience methods
     - Added check + nice warning for lack of ->add_class_attribute

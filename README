@@ -2,7 +2,7 @@ NAME
     MooseX::Scaffold - Template metaprogramming with Moose
 
 VERSION
-    Version 0.03
+    Version 0.04
 
 SYNOPSIS
         package MyScaffolder;
@@ -152,16 +152,20 @@ SUPPORT
 
     You can also look for information at:
 
-    * RT: CPAN's request tracker
+    *   RT: CPAN's request tracker
+
         <http://rt.cpan.org/NoAuth/Bugs.html?Dist=MooseX-Scaffold>
 
-    * AnnoCPAN: Annotated CPAN documentation
+    *   AnnoCPAN: Annotated CPAN documentation
+
         <http://annocpan.org/dist/MooseX-Scaffold>
 
-    * CPAN Ratings
+    *   CPAN Ratings
+
         <http://cpanratings.perl.org/d/MooseX-Scaffold>
 
-    * Search CPAN
+    *   Search CPAN
+
         <http://search.cpan.org/dist/MooseX-Scaffold>
 
 ACKNOWLEDGEMENTS
