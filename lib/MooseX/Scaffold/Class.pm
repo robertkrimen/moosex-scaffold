@@ -45,7 +45,7 @@ sub class_has {
     unless ($self->meta->can('add_class_attribute')) {
         croak "Can't add class attribute: You need to 'use MooseX::ClassAttribute' in ", $self->name;
     }
-    return MooseX::ClassAttribute::class_has($self->package, @_);
+    return MooseX::ClassAttribute::class_has( $self->meta, @_ );
 }
 
 1;

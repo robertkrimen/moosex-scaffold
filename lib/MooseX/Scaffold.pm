@@ -9,11 +9,11 @@ MooseX::Scaffold - Template metaprogramming with Moose
 
 =head1 VERSION
 
-Version 0.04
+Version 0.05
 
 =cut
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 =head1 SYNOPSIS
 
@@ -255,10 +255,7 @@ sub scaffold {
         else {
             my $meta = Moose::Meta::Class->create($class_package);
             unless ($no_class_attribute) {
-                Moose::Util::MetaRole::apply_metaclass_roles(
-                    for_class => $class_package,
-                    metaclass_roles => [ 'MooseX::ClassAttribute::Role::Meta::Class' ],
-                )
+                MooseX::ClassAttribute->init_meta( for_class => $class_package );
             }
         }
     }
